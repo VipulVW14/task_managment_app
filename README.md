@@ -111,29 +111,3 @@ docker-compose up --build
 ```sh
 docker-compose down
 ```
-
----
-
-## Project Structure
-```
-task-management-app/
-│── backend/                 # Express.js API
-│   ├── src/
-│   │   ├── routes/          # API routes
-│   │   ├── middleware/      # JWT authentication
-│   │   ├── prisma/          # Prisma database schema
-│   │   ├── server.js        # Express server
-│   ├── Dockerfile           # Backend Docker config
-│
-│── frontend/                # React Frontend
-│   ├── src/
-│   │   ├── pages/           # Login, Tasks
-│   │   ├── components/      # TaskForm, UI components
-│   │   ├── store/           # Redux store
-│   ├── Dockerfile           # Frontend Docker config
-│
-│── docker-compose.yml       # Docker Compose configuration
-│── README.md                # Project documentation
-```
-
-

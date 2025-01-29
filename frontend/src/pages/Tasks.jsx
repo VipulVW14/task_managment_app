@@ -1,0 +1,41 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTasks, addTask } from "../slices/taskSlice";
+import TaskForm from "../components/TaskForm";
+
+const Tasks = () => {
+  const dispatch = useDispatch();
+  const tasks = useSelector((state) => state.tasks.tasks);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchTasks());
+  }, [dispatch]);
+
+  const handleAddTask = (task) => {
+    dispatch(addTask(task));
+    setIsModalOpen(false);
+  };
+
+  return (
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Tasks</h2>
+      <button onClick={() => setIsModalOpen(true)} className="bg-green-500 text-white px-4 py-2 mb-4">
+        + Add Task
+      </button>
+
+      <ul>
+        {tasks.map((task) => (
+          <li key={task.id} className="border p-2 mt-2 flex justify-between">
+            <span>{task.title}</span>
+            <button className="bg-yellow-500 text-white px-4 py-1">Edit</button>
+          </li>
+        ))}
+      </ul>
+
+      {isModalOpen && <TaskForm onSubmit={handleAddTask} onClose={() => setIsModalOpen(false)} />}
+    </div>
+  );
+};
+
+export default Tasks;

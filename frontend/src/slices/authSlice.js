@@ -4,31 +4,49 @@ import axios from "axios";
 const API_URL = "http://localhost:5000/api/auth";
 
 export const loginUser = createAsyncThunk("auth/loginUser", async (credentials) => {
-  const response = await axios.post(`${API_URL}/login`, credentials);
-  localStorage.setItem("token", response.data.token);
+  const response = await axios.post("http://localhost:5000/api/auth/login", credentials, {
+    withCredentials: true,  
+  });
+
+  const { accessToken } = response.data;
+  if (accessToken) {
+    localStorage.setItem("token", accessToken);  
+  }
+  
   return response.data;
 });
 
-export const registerUser = createAsyncThunk("auth/registerUser", async (userData) => {
-  await axios.post(`${API_URL}/register`, userData);
+export const refreshToken = createAsyncThunk("auth/refreshToken", async () => {
+  const response = await axios.post("http://localhost:5000/api/auth/refresh", {}, { withCredentials: true });
+  return response.data.accessToken;
 });
+
+// Axios interceptor to refresh token automatically
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response.status === 401) {
+      const newToken = await refreshAccessToken();
+      if (newToken) {
+        error.config.headers["Authorization"] = `Bearer ${newToken}`;
+        return axios(error.config);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
-  initialState: { user: null, token: localStorage.getItem("token") || "" },
+  initialState: { token: localStorage.getItem("token") || "" },
   reducers: {
     logout: (state) => {
       localStorage.removeItem("token");
-      state.user = null;
+      axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
       state.token = "";
     },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(loginUser.fulfilled, (state, action) => {
-      state.token = action.payload.token;
-    });
   },
 });
 
 export const { logout } = authSlice.actions;
-export default authSlice.reducer;
+export default authSlice

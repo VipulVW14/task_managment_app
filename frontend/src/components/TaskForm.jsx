@@ -21,6 +21,7 @@ const TaskForm = ({ task, onSubmit, onClose }) => {
             onChange={(e) => setTitle(e.target.value)}
             className="w-full border p-2 mb-2"
           />
+          <br/>
           <textarea
             placeholder="Task Description"
             value={description}

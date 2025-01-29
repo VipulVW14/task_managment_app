@@ -1,20 +1,35 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTasks, addTask } from "../slices/taskSlice";
+import { fetchTasks, addTask, updateTask, deleteTask } from "../slices/taskSlice";
 import TaskForm from "../components/TaskForm";
 
 const Tasks = () => {
   const dispatch = useDispatch();
   const tasks = useSelector((state) => state.tasks.tasks);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentTask, setCurrentTask] = useState(null);
 
   useEffect(() => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
-  const handleAddTask = (task) => {
-    dispatch(addTask(task));
+  const handleAddOrUpdateTask = (task) => {
+    if (currentTask) {
+      dispatch(updateTask({ id: currentTask.id, task }));
+    } else {
+      dispatch(addTask(task));
+    }
     setIsModalOpen(false);
+    setCurrentTask(null);
+  };
+
+  const handleEdit = (task) => {
+    setCurrentTask(task);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (id) => {
+    dispatch(deleteTask(id));
   };
 
   return (
@@ -28,12 +43,19 @@ const Tasks = () => {
         {tasks.map((task) => (
           <li key={task.id} className="border p-2 mt-2 flex justify-between">
             <span>{task.title}</span>
-            <button className="bg-yellow-500 text-white px-4 py-1">Edit</button>
+            <div>
+              <button onClick={() => handleEdit(task)} className="bg-yellow-500 text-white px-4 py-1 mx-2">
+                Edit
+              </button>
+              <button onClick={() => handleDelete(task.id)} className="bg-red-500 text-white px-4 py-1">
+                Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>
 
-      {isModalOpen && <TaskForm onSubmit={handleAddTask} onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && <TaskForm task={currentTask} onSubmit={handleAddOrUpdateTask} onClose={() => setIsModalOpen(false)} />}
     </div>
   );
 };

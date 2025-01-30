@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTasks, addTask, updateTask, deleteTask } from "../slices/taskSlice";
 import TaskForm from "../components/TaskForm";
-import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
+import { AiOutlineDelete, AiOutlineEdit, AiOutlineUnorderedList  } from 'react-icons/ai';
+import { FaTasks } from "react-icons/fa";
 
 const Tasks = () => {
   const dispatch = useDispatch();
@@ -34,13 +35,16 @@ const Tasks = () => {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Tasks</h2>
+    <div className="p-6 px-7">
+      <div className="flex align-bottom">
+        <span className="mt-1 mr-5"><FaTasks size={28}/></span>
+        <p className="text-3xl mb-15 font-mono font-bold leading-tight tracking-normal text-gray-800">Task Manager</p>
+      </div>
+          
       <button onClick={() => setIsModalOpen(true)} className="bg-green-500 text-white px-4 py-2 mb-4 rounded-md">
         + Add Task
       </button>
 
-      {/* Table Structure */}
       <div className="w-full overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
           <thead>

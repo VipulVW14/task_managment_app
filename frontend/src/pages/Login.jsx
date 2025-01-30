@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../slices/authSlice";
 import { useNavigate } from "react-router-dom";
+import { FaTasks } from "react-icons/fa";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,8 +20,11 @@ const Login = () => {
   return (
     <div className="grid grid-cols-4 bg-white h-screen w-full">
       <div className="w-full items-center flex flex-col mt-15 rounded-lg">
-        <p className="text-3xl mb-15 font-mono font-bold leading-tight tracking-normal text-gray-800">Task Management App</p>
-        <p className="text-2xl mb-9 font-mono">
+        <div className="flex align-bottom">
+          <span className="mt-1 mr-4"><FaTasks size={28}/></span>
+          <p className="text-3xl mb-15 font-mono font-bold leading-tight tracking-normal text-gray-800">Task Manager</p>
+        </div>
+        <p className="text-2xl mb-9 font-mono font-medium">
             Login to your account
         </p>
         

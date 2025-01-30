@@ -25,7 +25,7 @@ router.post("/register", async (req, res) => {
     const user = await prisma.user.create({
       data: { email, password: hashedPassword },
     });
-    res.status(201).json({ message: "User created", user });
+    res.status(201).json({ message: "User created" });
   } catch (error) {
     res.status(400).json({ error: "User already exists" });
   }
@@ -42,24 +42,27 @@ router.post("/login", async (req, res) => {
 
   const { accessToken, refreshToken } = generateTokens(user.id);
 
-  res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: "Strict" });
+  res.cookie("refreshToken", refreshToken, { 
+    httpOnly: true, 
+    secure: process.env.NODE_ENV === "production", 
+    sameSite: "Strict"
+  });
   res.json({ accessToken });
 });
 
+// Refresh Token Route
 router.post("/refresh", async (req, res) => {
-  const refreshToken = req.cookies?.refreshToken; // Retrieve refresh token from cookies
+  const refreshToken = req.cookies?.refreshToken; 
   if (!refreshToken) return res.status(403).json({ error: "No refresh token" });
 
   try {
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+    const decoded = jwt.verify(refreshToken, REFRESH_SECRET);
     const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
 
     if (!user) return res.status(403).json({ error: "Invalid refresh token" });
 
-    const newAccessToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "15m" });
-
+    const newAccessToken = jwt.sign({ userId: user.id }, SECRET, { expiresIn: "15m" });
     res.json({ accessToken: newAccessToken });
-
   } catch {
     res.status(403).json({ error: "Invalid refresh token" });
   }
@@ -70,7 +73,5 @@ router.post("/logout", (req, res) => {
   res.clearCookie("refreshToken", { httpOnly: true, secure: true, sameSite: "Strict" });
   res.json({ message: "Logged out" });
 });
-
-
 
 export default router;

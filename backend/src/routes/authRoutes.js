@@ -11,7 +11,7 @@ const SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
 
 const generateTokens = (userId) => {
-  const accessToken = jwt.sign({ userId }, SECRET, { expiresIn: "15m" });
+  const accessToken = jwt.sign({ userId }, SECRET, { expiresIn: "120m" });
   const refreshToken = jwt.sign({ userId }, REFRESH_SECRET, { expiresIn: "7d" });
   return { accessToken, refreshToken };
 };

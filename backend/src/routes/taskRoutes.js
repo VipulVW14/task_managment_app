@@ -9,16 +9,29 @@ const SECRET = process.env.JWT_SECRET;
 // Middleware to authenticate user
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(403).json({ error: "Unauthorized" });
+
+  if (!token) {
+    console.log("No token provided");  // Debugging step
+    return res.status(403).json({ error: "Unauthorized: Token missing" });
+  }
 
   try {
     const decoded = jwt.verify(token, SECRET);
+    console.log("Token decoded:", decoded); // Debugging step
     req.userId = decoded.userId;
+
+    if (!req.userId) {
+      console.log("userId missing in token payload");  // Debugging step
+      return res.status(403).json({ error: "Unauthorized: Invalid token payload" });
+    }
+
     next();
-  } catch {
+  } catch (error) {
+    console.log("Token verification failed:", error.message);  // Debugging step
     res.status(401).json({ error: "Invalid token" });
   }
 };
+
 
 // Fetch all tasks
 router.get("/", authenticate, async (req, res) => {

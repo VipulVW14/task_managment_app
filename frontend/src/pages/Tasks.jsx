@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTasks, addTask, updateTask, deleteTask } from "../slices/taskSlice";
 import TaskForm from "../components/TaskForm";
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 
 const Tasks = () => {
   const dispatch = useDispatch();
@@ -39,24 +40,36 @@ const Tasks = () => {
         + Add Task
       </button>
 
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id} className="border p-2 mt-2 flex justify-between">
-            <span>{task.title}</span>
-            <br></br>
-            <span>{task.description}</span>
-            <div>
-              <button onClick={() => handleEdit(task)} className="bg-yellow-500  rounded-md text-white px-4 py-1 mx-2">
-                Edit
-              </button>
-              <button onClick={() => handleDelete(task.id)} className="bg-red-500  rounded-md text-white px-4 py-1">
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-
+      {/* Table Structure */}
+      <div className="w-full overflow-x-auto">
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border p-2">Task</th>
+              <th className="border p-2">Description</th>
+              <th className="border p-2">Status</th>
+              <th className="border p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tasks.map((task) => (
+              <tr key={task.id} className="border">
+                <td className="border p-2">{task.title}</td>
+                <td className="border p-2">{task.description}</td>
+                <td className="border p-2">{task.status}</td>
+                <td className="p-2 flex justify-center space-x-2">
+                  <button onClick={() => handleEdit(task)} className="text-blue-600 hover:bg-blue-100 rounded-md px-3 py-2">
+                    <AiOutlineEdit />
+                  </button>
+                  <button onClick={() => handleDelete(task.id)} className="text-red-600 hover:bg-red-100 rounded-md px-3 py-2">
+                    <AiOutlineDelete />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       {isModalOpen && <TaskForm task={currentTask} onSubmit={handleAddOrUpdateTask} onClose={() => setIsModalOpen(false)} />}
     </div>
   );

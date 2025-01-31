@@ -11,7 +11,7 @@ const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
-    console.log("No token provided");  // Debugging step
+    console.log("No token provided");
     return res.status(403).json({ error: "Unauthorized: Token missing" });
   }
 
@@ -21,13 +21,13 @@ const authenticate = (req, res, next) => {
     req.userId = decoded.userId;
 
     if (!req.userId) {
-      console.log("userId missing in token payload");  // Debugging step
+      console.log("userId missing in token payload");
       return res.status(403).json({ error: "Unauthorized: Invalid token payload" });
     }
 
     next();
   } catch (error) {
-    console.log("Token verification failed:", error.message);  // Debugging step
+    console.log("Token verification failed:", error.message);
     res.status(401).json({ error: "Invalid token" });
   }
 };
